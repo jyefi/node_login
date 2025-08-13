@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  node-app:
+    image: node:18-alpine
+    container_name: node_app
+    volumes:
+      - ./app:/app
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    command: sh -c "npm install dotenv &&npm install && node index.js"

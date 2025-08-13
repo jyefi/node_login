@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Kukis Style</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .login-header {
+            background: linear-gradient(70deg, #732982, #e40303, #ff8c00, #ffed00, #008018, #004cff);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .form-control {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 12px 20px;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 0 0.2rem rgba(78, 205, 196, 0.25);
+        }
+        .btn-kukis {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .btn-kukis:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .social-btn {
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin: 0 10px;
+            transition: transform 0.3s;
+        }
+        .social-btn:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="login-container">
+                    <div class="login-header">
+                        <i class="fa-solid fa-briefcase fa-3x mb-3"></i>
+                        <h2>Node JS Login</h2>
+                        <p class="mb-0">Bienvenido de vuelta</p>
+                    </div>
+                    <div class="p-4">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" name="username" class="form-control border-start-0" placeholder="Usuario o Email" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" name="password" class="form-control border-start-0" placeholder="Contraseña" required>
+                                </div>
+                            </div>
+                            <div id="loginError" class="text-danger mb-3" style="display:none;"></div>
+                            <div id="loginOK" class="text-success mb-3" style="display:none;"></div>
+                            <button type="submit" class="btn btn-kukis w-100 mb-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                            </button>
+                        </form>
+                        <div class="text-center">
+                            <hr class="my-4">
+                            <p class="text-muted">
+                                ¿No tienes cuenta? 
+                                <a href="#" class="text-decoration-none fw-bold" style="color: #4ecdc4;">Regístrate</a>
+                            </p>
+                            <a href="#" class="text-muted text-decoration-none">¿Olvidaste tu contraseña?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const username = e.target.username.value;
+            const password = e.target.password.value;
+
+            try {
+                const res = await fetch("http://localhost:3000/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Guardar token JWT en localStorage
+                    localStorage.setItem("token", data.token);
+                    // Redirigir al dashboard o página principal
+                    document.getElementById("loginOK").textContent = "Login exitoso";
+                    document.getElementById("loginOK").style.display = "block";
+                    document.getElementById("loginError").textContent = "";
+
+                } else {
+                    document.getElementById("loginError").textContent = data.message || "Error de autenticación";
+                    document.getElementById("loginError").style.display = "block";
+                    document.getElementById("loginOK").textContent = "";
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById("loginError").textContent = "Error de conexión con el servidor";
+                document.getElementById("loginError").style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>
